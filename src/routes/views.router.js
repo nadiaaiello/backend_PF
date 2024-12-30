@@ -13,7 +13,7 @@ class ViewsRouter {
 
   init() {
     // Rutas públicas
-    this.router.get("/", this.renderHomePage);
+    this.router.get("/", this.renderIndexPage);
     this.router.get("/login", this.renderLoginPage);
     this.router.get("/register", this.renderRegisterPage);
     this.router.get("/profile", this.renderProfilePage);
@@ -38,8 +38,8 @@ class ViewsRouter {
   }
 
   // Render Home page (or product listing page)
-  renderHomePage = (req, res) => {
-    res.render("home");
+  renderIndexPage = (req, res) => {
+    res.render("index");
   };
 
   // Render Login page
