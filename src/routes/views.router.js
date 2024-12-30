@@ -13,7 +13,7 @@ class ViewsRouter {
 
   init() {
     // Rutas públicas
-    this.router.get("/", authTokenAndRole("ADMIN"), this.renderHomePage);
+    this.router.get("/", this.renderHomePage);
     this.router.get("/login", this.renderLoginPage);
     this.router.get("/register", this.renderRegisterPage);
     this.router.get("/profile", this.renderProfilePage);
