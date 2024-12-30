@@ -1,0 +1,41 @@
+ <header>
+        <nav>
+            <ul>
+                <li><a href="/products">Productos</a></li>
+                <li><a href="/cart">Carrito</a></li>
+                <li><a href="/login">Iniciar Sesión</a></li>
+                <li><a href="/profile">Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Register</h1>
+<form id="register-form">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required />
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required />
+  <button type="button" id="toggle-password">Show Password</button>
+  <button type="submit">Register</button>
+</form>
+
+<script>
+  const togglePasswordButton = document.getElementById("toggle-password");
+  const passwordInput = document.getElementById("password");
+
+  togglePasswordButton.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    togglePasswordButton.textContent = type === "password" ? "Show Password" : "Hide Password";
+  });
+
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    // Logic to send register request
+  });
+</script>

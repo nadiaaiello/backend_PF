@@ -1,0 +1,121 @@
+ <header>
+        <nav>
+            <ul>
+                <li><a href="/products">Productos</a></li>
+                <li><a href="/cart">Carrito</a></li>
+                <li><a href="/login">Iniciar Sesión</a></li>
+                <li><a href="/profile">Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Products</h1>
+<div id="products-container"></div>
+
+<script>
+  const productsContainer = document.getElementById("products-container");
+
+  const loadProducts = async () => {
+    try {
+      const response = await fetch("/api/products");
+      if (!response.ok) {
+        throw new Error("Failed to load products.");
+      }
+
+      const products = await response.json();
+
+      productsContainer.innerHTML = products
+        .map(
+          (product) => `
+          <div>
+            <h3>${product.title}</h3>
+            <p>${product.description}</p>
+            <p>Price: $${product.price}</p>
+            <button data-id="${product._id}" class="add-to-cart">Add to Cart</button>
+          </div>`
+        )
+        .join("");
+
+      document.querySelectorAll(".add-to-cart").forEach((button) =>
+        button.addEventListener("click", addToCart)
+      );
+    } catch (error) {
+      console.error("Error loading products:", error);
+      productsContainer.innerHTML = "<p>Failed to load products.</p>";
+    }
+  };
+
+  const getCartIdForUser = async () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const response = await fetch("/api/carts/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        // Procesa el body de la respuesta solo una vez
+        const cart = await response.json();
+        return cart._id; // Devuelve el ID del carrito
+      } else {
+        const error = await response.json(); // Esto solo se ejecutará si el código de estado no es 2xx
+        console.warn(`Error fetching cart: ${error.error}`);
+      }
+    } catch (error) {
+      console.error("Error fetching cart ID for user:", error);
+    }
+  }
+  return null; // Devuelve null si no hay token o si ocurre un error
+};
+
+
+  const addToCart = async (e) => {
+    const productId = e.target.getAttribute("data-id");
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // User is logged in, add product to MongoDB cart
+      try {
+        const cartId = await getCartIdForUser();
+        if (!cartId) {
+          alert("No cart found for the user.");
+          return;
+        }
+
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ quantity: 1 }), // Default quantity to 1
+        });
+
+        if (response.ok) {
+          alert("Product added to your cart!");
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.error}`);
+        }
+      } catch (err) {
+        console.error("Error adding product to MongoDB cart:", err);
+        alert("Failed to add product to cart.");
+      }
+    } else {
+      // User is not logged in, use localStorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || { products: [] };
+
+      const productIndex = cart.products.findIndex((item) => item.product === productId);
+      if (productIndex >= 0) {
+        cart.products[productIndex].quantity += 1;
+      } else {
+        cart.products.push({ product: productId, quantity: 1 });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Product added to your cart!");
+    }
+  };
+
+  // Load products on page load
+  loadProducts();
+</script>

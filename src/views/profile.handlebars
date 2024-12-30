@@ -1,0 +1,89 @@
+ <header>
+        <nav>
+            <ul>
+                <li><a href="/products">Productos</a></li>
+                <li><a href="/cart">Carrito</a></li>
+                <li><a href="/login">Iniciar Sesión</a></li>
+                <li><a href="/profile">Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Your Profile</h1>
+<div id="profile-container"></div>
+<button onclick="logout()">Logout</button>
+
+<script>
+  const profileContainer = document.getElementById("profile-container");
+
+  // Load profile when the page is loaded
+const loadProfile = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return (profileContainer.innerHTML = "<p>Please log in to view your profile.</p>");
+  }
+
+  try {
+    const response = await fetch("/api/users/user", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Check if the response is okay
+    if (!response.ok) {
+      return (profileContainer.innerHTML = "<p>Failed to load profile.</p>");
+    }
+
+    // Parse the JSON response
+    const data = await response.json();
+
+    // Ensure the response has the expected structure
+    if (data.status === "success" && data.user) {
+      const user = data.user;
+      profileContainer.innerHTML = `
+        <p>Name: ${user.first_name} ${user.last_name}</p>
+        <p>Email: ${user.email}</p>
+        <p>Age: ${user.age}</p>
+        <p>Role: ${user.role}</p>
+      `;
+    } else {
+      profileContainer.innerHTML = "<p>Profile data is unavailable.</p>";
+    }
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    profileContainer.innerHTML = "<p>Failed to load profile data.</p>";
+  }
+};
+
+loadProfile(); // Call the function to load the profile
+
+
+
+  // Logout function to clear the token
+  const logout = async () => {
+    try {
+      const response = await fetch("/api/users/logout", {
+        method: "POST",
+        credentials: "include", // Ensures cookies are sent with the request (if any)
+      });
+
+      if (response.ok) {
+        // Remove the token from localStorage
+        localStorage.removeItem("token");
+
+        // Optionally remove cookies here if needed
+        // document.cookie = 'jwtCookieToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+        alert("You have been logged out.");
+        window.location.href = "/login"; // Redirect to the login page
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Logout failed.");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+      alert("An error occurred while logging out. Please try again.");
+    }
+  };
+
+  // Call the function to load profile information
+  loadProfile();
+</script>

@@ -1,0 +1,6 @@
+node_modules/
+src/config/.env.development
+src/config/.env.production
+src/config/.env.default
+.DS_Store
+src/.DS_Store
