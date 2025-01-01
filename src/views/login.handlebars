@@ -82,13 +82,13 @@
   });
 
   // Redirect to GitHub login
-  githubLoginButton.addEventListener("click", () => {
+  {{!-- githubLoginButton.addEventListener("click", () => {
     window.location.href = "/api/users/auth/github";
-  });
+  }); --}}
 
   // Validate Email Format
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
+  }; 
 </script>

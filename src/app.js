@@ -84,7 +84,7 @@ const startServer = async () => {
     // app.listen(config.port, () => {
     //   console.log(`Servidor escuchando en el puerto ${config.port}`);
     // });
-    app.listen(PORT,()=>console.log('listening on ${PORT}'))
+    app.listen(PORT,()=>console.log(`listening on ${PORT}`))
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
   }

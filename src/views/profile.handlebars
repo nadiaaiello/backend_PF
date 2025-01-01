@@ -10,7 +10,7 @@
     </header>
     <h1>Your Profile</h1>
 <div id="profile-container"></div>
-<button onclick="logout()">Logout</button>
+
 
 <script>
   const profileContainer = document.getElementById("profile-container");
@@ -43,7 +43,7 @@ const loadProfile = async () => {
         <p>Email: ${user.email}</p>
         <p>Age: ${user.age}</p>
         <p>Role: ${user.role}</p>
-      `;
+      <button onclick="logout()">Logout</button>`
     } else {
       profileContainer.innerHTML = "<p>Profile data is unavailable.</p>";
     }
